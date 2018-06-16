@@ -60,7 +60,7 @@ def build_model():
 #np.random.shuffle(train_data)
 no_of_folds = 4
 size_of_fold = int(len(train_data)/no_of_folds)
-num_of_epochs = 12
+num_of_epochs = 75
 all_val_acc_histories = []
 
 for fold in range(no_of_folds):
