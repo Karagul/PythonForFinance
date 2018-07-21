@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jun 11 00:51:38 2018
+Created on Fri Jul 20 19:52:59 2018
 
 @author: Tim George Kabue
 @email: timkabue@yahoo.com
@@ -23,11 +23,17 @@ df['Dates'] = df.index.map(mdates.date2num)
 ohlc = df[['Dates','Open','High','Low','Close']].tail(200)
 
 #******Draw the candlesticks.******
-f1 , ax = plt.subplots(figsize=(10,5))
+f1 , ax = plt.subplots(2,1)
 
 #******Plot the candlesticks.******
-(lines,patches) = candlestick_ohlc(ax,ohlc.values,width=.6/(24*4),colorup='green',colordown='red')
+(lines,patches) = candlestick_ohlc(ax[0],ohlc.values,width=.6/(24*4),colorup='green',colordown='red')
+ax[0].xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S'))
 
-ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S'))
+#******Plot volume.******
+volume = df['Volume'].tail(200)
+ax[1].fill_between(volume.index.map(mdates.date2num),volume.values,0)
+ax[1].xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M:%S'))
+
 
 plt.show()
+

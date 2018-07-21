@@ -90,7 +90,7 @@ for counter in range(num_of_epochs):
     avg_value_per_epoch = np.mean(val_acc_values_per_epoch) #average of those values
     avg_val_acc_histories.append(avg_value_per_epoch)
     
-#avg_val_acc_histories = [np.mean([x[i] for x in all_val_acc_histories]) for i in range(num_of_epochs)] #Tutorial way.
+avg_val_acc_histories = [np.mean([history_per_fold[epoch] for history_per_fold in all_val_acc_histories]) for epoch in range(num_of_epochs)] #Tutorial way.
     
 #******Plot.******
 plt.plot(range(num_of_epochs),avg_val_acc_histories,'bo',label='Average validation accuracy')
