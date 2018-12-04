@@ -11,14 +11,27 @@ Created on Sat Dec  1 14:36:35 2018
 import pandas as pd
 import numpy as np
 import talib
+import matplotlib.dates as mdates
 
 #Retrieve data.
 #*****************************************************************************
 
-location = "C:\\Users\\User\\Projects\\MT4\\Data\\EURUSDhourly30_12_2018.csv"
-location_daily = "C:\\Users\\User\\Projects\\MT4\\Data\\EURUSDdaily30_12_2018.csv"
+location = "C:\\Users\\User\\Projects\\MT4\\Data\\EURUSDhourly4_12_2018.csv"
+location_daily = "C:\\Users\\User\\Projects\\MT4\\Data\\EURUSDdaily4_12_2018.csv"
 df = pd.read_csv(location,names=['Date','Time','Open','High','Low','Close','Volume'])
 df_daily = pd.read_csv(location_daily,names=['Date','Time','Open','High','Low','Close','Volume'])
+
+#******Retrieve financial data.******
+df1 = pd.read_csv(location,
+                 names=['Date','Time','Open','High','Low','Close','Volume'],                
+                 parse_dates=[['Date','Time']],
+                 index_col=['Date_Time'])
+
+#******Preprocess date format for candlestick_ohlc.****** 
+df1['Dates'] = df1.index.map(mdates.date2num)
+df1 = df1.reset_index() 
+
+df['Dates'] = df1['Dates']
 
 #******************************************************************************
 
@@ -125,4 +138,36 @@ while index <= df.iloc[-1].name:
             df.at[index,column_names[group][count]] = df.iloc[index][candlestick_values[group]] - df.iloc[index][pivotpoint_name]
         group += 1    
     index += 1
+#*******************************************************************************************************************************
+    
+#Sample labels.
+df['Label'] = 0
+index = 0
+point = 0.0001
+
+while index < df.iloc[-1].name:
+    if df.iloc[index]['Bias'] == df.iloc[index+1]['Bias']:
+        if df.iloc[index]['Bias'] == 1 and df.iloc[index+1]['TopWick'] + df.iloc[index+1]['Body'] >= 10*point and df.iloc[index+1]['BottomWick'] <= 5*point:
+            df.at[index,'Label'] = 1
+        elif df.iloc[index]['Bias'] == 0 and df.iloc[index+1]['BottomWick'] + df.iloc[index+1]['Body'] >= 10*point and df.iloc[index+1]['TopWick'] <= 5*point:
+            df.at[index,'Label'] = 1
+    index += 1
+            
 #******************************************************************************
+    
+#Save dataframe.
+df_labels = df['Label']
+
+df = df[['Dates','Open','High','Low','Close','Volume','Bias',
+         'EMA_10', 'EMA_20','Range','Body','TopWick','BottomWick',
+         'PivotPoint','Resistance1','Support1', 'Resistance2','Support2','Resistance3','Support3',
+         'H_PP','H_R1','H_R2','H_R3','H_S1', 'H_S2','H_S3',
+         'L_PP','L_R1','L_R2','L_R3','L_S1','L_S2','L_S3',
+         'O_PP','O_R1','O_R2', 'O_R3','O_S1','O_S2','O_S3',
+         'C_PP','C_R1','C_R2','C_R3','C_S1','C_S2','C_S3']]
+
+dataset = np.asarray(df)
+datalabels = np.asarray(df_labels)
+
+np.save('latest_dataset',dataset)
+np.save('latest_datalabels',datalabels)
