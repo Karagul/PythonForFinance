@@ -44,7 +44,7 @@ def build_model():
     return model
     
 #Train network - with KFold cross validation and evlauate.
-num_epochs = 500
+num_epochs = 80
 all_val_mae_histories = [] #Validation Accuracy values
 num_folds = 4
 kfold = KFold(num_folds) 

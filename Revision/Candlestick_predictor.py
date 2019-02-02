@@ -16,10 +16,14 @@ import matplotlib.dates as mdates
 #Retrieve data.
 #*****************************************************************************
 
-location = "C:\\Users\\User\\Projects\\MT4\\Data\\EURUSDhourly4_12_2018.csv"
-location_daily = "C:\\Users\\User\\Projects\\MT4\\Data\\EURUSDdaily4_12_2018.csv"
+location = "C:\\Users\\User\\Projects\\MT4\\Data\\EURUSD15_5_12_2018latest.csv"
+location_daily = "C:\\Users\\User\\Projects\\MT4\\Data\\EURUSDdaily5_12_2018.csv"
 df = pd.read_csv(location,names=['Date','Time','Open','High','Low','Close','Volume'])
 df_daily = pd.read_csv(location_daily,names=['Date','Time','Open','High','Low','Close','Volume'])
+'''
+#Create dataframe with two columns: date and time.
+df_date = df[['Date','Time']]
+df_date.to_csv('Date_Time.csv')
 
 #******Retrieve financial data.******
 df1 = pd.read_csv(location,
@@ -32,7 +36,7 @@ df1['Dates'] = df1.index.map(mdates.date2num)
 df1 = df1.reset_index() 
 
 df['Dates'] = df1['Dates']
-
+'''
 #******************************************************************************
 
 #Create columns.
@@ -139,7 +143,7 @@ while index <= df.iloc[-1].name:
         group += 1    
     index += 1
 #*******************************************************************************************************************************
-    
+'''   
 #Sample labels.
 df['Label'] = 0
 index = 0
@@ -169,5 +173,11 @@ df = df[['Dates','Open','High','Low','Close','Volume','Bias',
 dataset = np.asarray(df)
 datalabels = np.asarray(df_labels)
 
-np.save('latest_dataset',dataset)
-np.save('latest_datalabels',datalabels)
+np.save('15min_dataset',dataset)
+np.save('15min_datalabels',datalabels)
+
+#Save labels dataframe.
+data = list(zip(df_date['Date'],df_date['Time'],df_labels))
+df_classes = pd.DataFrame(data=data,columns=['Date','Time','Labels'])
+df_classes.to_csv('classes.csv',header=True,index=False)
+'''
